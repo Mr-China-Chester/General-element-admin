@@ -1,12 +1,22 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, getVersion, setVersion } from '@/utils/auth'
+import { getAllUrl, get_allUrl_suffix, getSOCKET } from '@/utils/index'
 import { resetRouter } from '@/router'
+import { custom_response } from '@/utils/response-invote'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    userInfo: null,
+    avatar: '',
+    allUrl: getAllUrl(),
+    socket_url: getSOCKET(),
+    allUrl_suffix: get_allUrl_suffix(),
+    table_text: {
+      nothing: '暂无数据'
+    },
+    version: getVersion()
   }
 }
 
@@ -24,6 +34,10 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_Version: (state, version) => {
+    setVersion(version)
+    state.version = version
   }
 }
 
@@ -33,6 +47,12 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
+        // custom_response({ response, module: 'account', action: 'login', reject, call: function(obj) {
+        //     const { data } = response
+        //     commit('SET_TOKEN', data.token)
+        //     setToken(data.token)
+        //     resolve(data)
+        // } })
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
@@ -94,4 +114,3 @@ export default {
   mutations,
   actions
 }
-
